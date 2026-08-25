@@ -2,6 +2,8 @@
 
 
 
+
+
 <html lang="en-GB">
 <head>
     <meta charset="UTF-8">
@@ -51,23 +53,24 @@
             color: #b3d9ff;
         }
 
-        .profile-selector {
+        .selector-bar {
             background: #2a2a2a;
             padding: 12px 25px;
             border-bottom: 2px solid #333;
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 20px;
             align-items: center;
         }
 
-        .profile-selector label {
+        .selector-bar label {
             font-weight: 600;
             color: #99ccff;
         }
 
         select {
             padding: 6px 12px;
-            font-size: 15px;
+            font-size: 14px;
             border-radius: 4px;
             border: 2px solid #0059b3;
             background: #1e1e1e;
@@ -86,7 +89,7 @@
             border-bottom: 2px solid #333333;
             display: flex;
             flex-wrap: wrap;
-            gap: 25px;
+            gap: 20px;
             font-size: 15px;
             font-weight: 500;
         }
@@ -174,25 +177,66 @@
             <p>Police Station / Duty Log — Authorised Use Only</p>
         </div>
 
-        <!-- Profile Selector -->
-        <div class="profile-selector">
+        <!-- Profile & Location Selectors -->
+        <div class="selector-bar">
             <label>Select Officer:</label>
             <select id="profileSelect">
                 <option value="kirsten">Kirsten McCaskill — 2140SN</option>
                 <option value="roxie">Roxie Mae — 43BX</option>
             </select>
+
+            <label>Select Location:</label>
+            <select id="locationSelect">
+                <option value="">-- Select Location --</option>
+                <optgroup label="Highways & Major Roads">
+                    <option>Highway 55</option>
+                    <option>Riverside Drive</option>
+                    <option>Oak Valley Drive</option>
+                    <option>Fairfax Road</option>
+                    <option>Valley Drive</option>
+                </optgroup>
+                <optgroup label="Residential Streets">
+                    <option>Colonial Drive</option>
+                    <option>Spring Creek Road</option>
+                    <option>Lakeview Court</option>
+                    <option>Maple Street</option>
+                    <option>Cedar Street</option>
+                    <option>Vine Street</option>
+                    <option>Gibson Lane</option>
+                    <option>Franklin Court</option>
+                    <option>Pineview Circle</option>
+                </optgroup>
+                <optgroup label="Town & District">
+                    <option>Independence Parkway</option>
+                    <option>Orchard Boulevard</option>
+                    <option>Georgia Avenue</option>
+                    <option>Grand Avenue</option>
+                    <option>Freedom Avenue</option>
+                    <option>Southern Avenue</option>
+                    <option>Liberty Way</option>
+                    <option>Madison Court</option>
+                </optgroup>
+                <optgroup label="Zones / Grid Areas">
+                    <option>Lake District (900s)</option>
+                    <option>North District (800s)</option>
+                    <option>East District (1100s / 1200s)</option>
+                    <option>West District (400s / 700s)</option>
+                    <option>Town Centre (200s / 300s / 500s)</option>
+                </optgroup>
+            </select>
         </div>
 
-        <!-- Fixed Info Bar -->
+        <!-- Info Bar -->
         <div class="info-bar">
             <span>Officer Name: <span id="officerName">Kirsten McCaskill</span></span>
             <span>Collar Number: <span id="collarNumber">2140SN</span></span>
+            <span>Location: <span id="locationName">Not Selected</span></span>
             <span id="current-time">Loading Time...</span>
         </div>
 
         <!-- Notepad Area -->
         <div class="notepad-body">
-            <textarea id="notes" placeholder="Enter notes, observations or details here..."></textarea>
+            <textarea id="notes" placeholder="Enter notes, observations, incident details, or patrol log here..."></textarea>
         </div>
 
         <!-- Submit Button -->
@@ -214,8 +258,10 @@
         // ========================
 
         const profileSelect = document.getElementById('profileSelect');
+        const locationSelect = document.getElementById('locationSelect');
         const nameDisplay = document.getElementById('officerName');
         const collarDisplay = document.getElementById('collarNumber');
+        const locationDisplay = document.getElementById('locationName');
         const timeDisplay = document.getElementById('current-time');
         const notesArea = document.getElementById('notes');
         const signBtn = document.getElementById('signBtn');
@@ -226,6 +272,11 @@
             const profile = profiles[profileSelect.value];
             nameDisplay.textContent = profile.name;
             collarDisplay.textContent = profile.collar;
+        });
+
+        // Update location display when selected
+        locationSelect.addEventListener('change', () => {
+            locationDisplay.textContent = locationSelect.value || "Not Selected";
         });
 
         // Update UK time every second
@@ -249,6 +300,7 @@
         signBtn.addEventListener('click', async () => {
             const notes = notesArea.value.trim();
             const profile = profiles[profileSelect.value];
+            const location = locationSelect.value || "Not Specified";
             const timestamp = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' });
 
             if (!notes) {
@@ -264,6 +316,7 @@
                     fields: [
                         { name: "Officer Name", value: profile.name, inline: true },
                         { name: "Collar Number", value: profile.collar, inline: true },
+                        { name: "Location", value: location, inline: false },
                         { name: "Date / Time", value: timestamp, inline: false },
                         { name: "Notepad Content", value: `\n${notes}\n` }
                     ],
