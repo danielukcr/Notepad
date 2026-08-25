@@ -1,12 +1,10 @@
 
 
-
-
 <html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Met Police — Official Notepad</title>
+    <title>Met Police — Official Notepad (Dark Mode)</title>
     <style>
         * {
             margin: 0;
@@ -16,25 +14,27 @@
         }
 
         body {
-            background: #f0f2f5;
+            background: #121212;
             padding: 20px;
             line-height: 1.6;
+            color: #e0e0e0;
         }
 
         .notepad-container {
             max-width: 850px;
             margin: 0 auto;
-            background: #fff;
-            border: 3px solid #003366;
+            background: #1e1e1e;
+            border: 3px solid #0059b3;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 89, 179, 0.25);
             overflow: hidden;
         }
 
         .met-header {
-            background: linear-gradient(135deg, #003366 0%, #004080 100%);
-            color: white;
+            background: linear-gradient(135deg, #00264d 0%, #003366 100%);
+            color: #ffffff;
             padding: 18px 25px;
+            border-bottom: 2px solid #0059b3;
         }
 
         .met-header h1 {
@@ -45,13 +45,14 @@
 
         .met-header p {
             font-size: 14px;
-            opacity: 0.9;
+            opacity: 0.8;
+            color: #b3d9ff;
         }
 
         .info-bar {
-            background: #e6edf5;
+            background: #262626;
             padding: 12px 25px;
-            border-bottom: 2px solid #ccc;
+            border-bottom: 2px solid #333333;
             display: flex;
             flex-wrap: wrap;
             gap: 25px;
@@ -60,11 +61,12 @@
         }
 
         .info-bar span {
-            color: #002244;
+            color: #99ccff;
         }
 
         .notepad-body {
             padding: 20px 25px;
+            background: #1a1a1a;
         }
 
         textarea {
@@ -72,30 +74,35 @@
             min-height: 320px;
             padding: 15px;
             font-size: 16px;
-            line-height: 1.7;
-            border: 2px solid #ccd6e0;
+            line-height: 28px;
+            border: 2px solid #334455;
             border-radius: 4px;
             resize: vertical;
-            background: #fcfdfd;
-            background-image: linear-gradient(#e8edf2 1px, transparent 1px);
+            background: #242424;
+            color: #e6e6e6;
+            background-image: linear-gradient(#2f353a 1px, transparent 1px);
             background-size: 100% 28px;
-            line-height: 28px;
         }
 
         textarea:focus {
             outline: none;
-            border-color: #003366;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+        }
+
+        textarea::placeholder {
+            color: #70757a;
         }
 
         .button-area {
             padding: 15px 25px 25px;
             text-align: right;
-            background: #f8f9fa;
-            border-top: 1px solid #ddd;
+            background: #1e1e1e;
+            border-top: 1px solid #333333;
         }
 
         button {
-            background: #003366;
+            background: linear-gradient(135deg, #004c99 0%, #0066cc 100%);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -103,15 +110,21 @@
             font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: all 0.25s ease;
         }
 
         button:hover {
-            background: #004c99;
+            background: linear-gradient(135deg, #0059b3 0%, #0077e6 100%);
+            box-shadow: 0 3px 10px rgba(0, 102, 204, 0.3);
         }
 
         button:active {
-            background: #00264d;
+            background: linear-gradient(135deg, #003366 0%, #004c99 100%);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .status {
@@ -121,8 +134,8 @@
             height: 22px;
         }
 
-        .success { color: #006622; }
-        .error   { color: #cc0000; }
+        .success { color: #66ff99; }
+        .error   { color: #ff6666; }
     </style>
 </head>
 <body>
@@ -165,7 +178,7 @@
         const signBtn = document.getElementById('signBtn');
         const statusBox = document.getElementById('status');
 
-        // Update time every second
+        // Update UK time every second
         function updateTime() {
             const now = new Date();
             const ukTime = now.toLocaleString('en-GB', {
@@ -196,7 +209,7 @@
             const payload = {
                 embeds: [{
                     title: "📝 Officer Signed Notepad Entry",
-                    color: 32896, // Green
+                    color: 32896,
                     fields: [
                         { name: "Officer Name", value: OFFICER_NAME, inline: true },
                         { name: "Collar Number", value: COLLAR_NUMBER, inline: true },
@@ -221,7 +234,7 @@
                 if (response.ok) {
                     statusBox.textContent = "✅ Signed & submitted successfully!";
                     statusBox.className = "status success";
-                    notesArea.value = ""; // Clear after send
+                    notesArea.value = "";
                 } else {
                     throw new Error(`Server responded: ${response.status}`);
                 }
