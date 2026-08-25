@@ -1,10 +1,12 @@
 
 
+
+
 <html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Met Police — Official Notepad (Dark Mode)</title>
+    <title>Met Police — Official Notepad</title>
     <style>
         * {
             margin: 0;
@@ -47,6 +49,35 @@
             font-size: 14px;
             opacity: 0.8;
             color: #b3d9ff;
+        }
+
+        .profile-selector {
+            background: #2a2a2a;
+            padding: 12px 25px;
+            border-bottom: 2px solid #333;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .profile-selector label {
+            font-weight: 600;
+            color: #99ccff;
+        }
+
+        select {
+            padding: 6px 12px;
+            font-size: 15px;
+            border-radius: 4px;
+            border: 2px solid #0059b3;
+            background: #1e1e1e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #0099ff;
         }
 
         .info-bar {
@@ -118,10 +149,6 @@
             box-shadow: 0 3px 10px rgba(0, 102, 204, 0.3);
         }
 
-        button:active {
-            background: linear-gradient(135deg, #003366 0%, #004c99 100%);
-        }
-
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -147,10 +174,19 @@
             <p>Police Station / Duty Log — Authorised Use Only</p>
         </div>
 
+        <!-- Profile Selector -->
+        <div class="profile-selector">
+            <label>Select Officer:</label>
+            <select id="profileSelect">
+                <option value="kirsten">Kirsten McCaskill — 2140SN</option>
+                <option value="roxie">Roxie Mae — 43BX</option>
+            </select>
+        </div>
+
         <!-- Fixed Info Bar -->
         <div class="info-bar">
-            <span>Officer Name: Kirsten McCaskill</span>
-            <span>Collar Number: 2140SN</span>
+            <span>Officer Name: <span id="officerName">Kirsten McCaskill</span></span>
+            <span>Collar Number: <span id="collarNumber">2140SN</span></span>
             <span id="current-time">Loading Time...</span>
         </div>
 
@@ -169,14 +205,28 @@
     <script>
         // ==== CONFIGURATION ====
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1540429827981582406/Zw0QBENUbPQs6mILgTpApERPshZ1ArSO82AQJ6wUkzKgNCkqn-4c1oBOtSxgjn52Xtol";
-        const OFFICER_NAME = "Kirsten McCaskill";
-        const COLLAR_NUMBER = "2140SN";
+        
+        // Officer Profiles
+        const profiles = {
+            kirsten: { name: "Kirsten McCaskill", collar: "2140SN" },
+            roxie:   { name: "Roxie Mae",        collar: "43BX" }
+        };
         // ========================
 
+        const profileSelect = document.getElementById('profileSelect');
+        const nameDisplay = document.getElementById('officerName');
+        const collarDisplay = document.getElementById('collarNumber');
         const timeDisplay = document.getElementById('current-time');
         const notesArea = document.getElementById('notes');
         const signBtn = document.getElementById('signBtn');
         const statusBox = document.getElementById('status');
+
+        // Switch profile when selected
+        profileSelect.addEventListener('change', () => {
+            const profile = profiles[profileSelect.value];
+            nameDisplay.textContent = profile.name;
+            collarDisplay.textContent = profile.collar;
+        });
 
         // Update UK time every second
         function updateTime() {
@@ -198,6 +248,7 @@
         // Send to Discord Webhook
         signBtn.addEventListener('click', async () => {
             const notes = notesArea.value.trim();
+            const profile = profiles[profileSelect.value];
             const timestamp = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' });
 
             if (!notes) {
@@ -211,8 +262,8 @@
                     title: "📝 Officer Signed Notepad Entry",
                     color: 32896,
                     fields: [
-                        { name: "Officer Name", value: OFFICER_NAME, inline: true },
-                        { name: "Collar Number", value: COLLAR_NUMBER, inline: true },
+                        { name: "Officer Name", value: profile.name, inline: true },
+                        { name: "Collar Number", value: profile.collar, inline: true },
                         { name: "Date / Time", value: timestamp, inline: false },
                         { name: "Notepad Content", value: `\n${notes}\n` }
                     ],
